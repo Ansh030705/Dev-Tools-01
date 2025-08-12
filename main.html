@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dev Utility Toolkit</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      background: 
+        /* linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.9)), */
+        url('https://images.pexels.com/photos/9242274/pexels-photo-9242274.jpeg') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+    }
+    .code-font {
+      font-family: 'Roboto Mono', monospace;
+    }
+    .glass {
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.36);
+    }
+    .active-tab {
+      background: rgba(124, 58, 237, 0.9);
+      font-weight: 600;
+      color: white;
+    }
+    .tab-btn {
+      transition: all 0.3s ease;
+    }
+    .tab-btn:hover {
+      background: rgba(124, 58, 237, 0.5);
+    }
+    textarea, input, select {
+      background-color: rgba(2, 6, 23, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+    textarea:focus, input:focus, select:focus {
+      outline: none;
+      border-color: #7c3aed;
+      box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.3);
+    }
+    button {
+      transition: all 0.3s ease;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .tool-section {
+      animation: fadeIn 0.5s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .scrollbar-custom::-webkit-scrollbar {
+      width: 8px;
+    }
+    .scrollbar-custom::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .scrollbar-custom::-webkit-scrollbar-thumb {
+      background: rgba(124, 58, 237, 0.6);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="text-gray-100 flex flex-col items-center p-5">
+  <div class="w-full max-w-6xl">
+    <h1 class="text-5xl font-bold mb-8 text-center bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
+      🛠️ Engineering Dev Toolkit
+    </h1>
+
+    <!-- Tabs -->
+    <div class="flex space-x-2 mb-8 bg-gray-900/50 p-1 rounded-lg">
+      <button class="tab-btn active-tab px-6 py-3 rounded-md" onclick="showTab('json', event)">
+        <span class="mr-2">🧾</span> JSON Formatter
+      </button>
+      <button class="tab-btn px-6 py-3 rounded-md" onclick="showTab('convert', event)">
+        <span class="mr-2">📐</span> Unit Converter
+      </button>
+      <button class="tab-btn px-6 py-3 rounded-md" onclick="showTab('readme', event)">
+        <span class="mr-2">📘</span> GitHub README
+      </button>
+    </div>
+
+    <!-- JSON Formatter Section -->
+    <div id="json" class="tool-section w-full space-y-6">
+      <div class="glass p-8 rounded-xl">
+        <h2 class="text-2xl font-bold mb-4 text-purple-400 flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+          </svg>
+          JSON Formatter
+        </h2>
+        <textarea id="jsonInput" class="w-full h-48 p-4 rounded-lg text-gray-100 code-font text-sm" 
+          placeholder='Paste raw JSON here...\nExample: {"name":"John","age":30,"city":"New York"}'></textarea>
+        <div class="flex items-center justify-between mt-4">
+          <button onclick="formatJSON()" class="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-lg font-medium flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 0v12h8V4H6z" clip-rule="evenodd" />
+            </svg>
+            Format JSON
+          </button>
+          <button onclick="copyJSON()" class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-medium flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
+              <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
+            </svg>
+            Copy to Clipboard
+          </button>
+        </div>
+        <div class="mt-6">
+          <h3 class="text-lg font-semibold mb-2 text-blue-400">Formatted Output:</h3>
+          <pre id="jsonOutput" class="whitespace-pre-wrap text-sm bg-gray-900/80 p-4 rounded-lg border border-gray-700 code-font scrollbar-custom max-h-64 overflow-auto"></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unit Converter Section -->
+    <div id="convert" class="tool-section hidden w-full space-y-6">
+      <div class="glass p-8 rounded-xl">
+        <h2 class="text-2xl font-bold mb-6 text-teal-400 flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
+          </svg>
+          Engineering Unit Converter
+        </h2>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-300">From Unit:</label>
+            <select id="fromUnit" class="w-full p-3 rounded-lg text-gray-100 code-font bg-gray-900/70">
+              <option value="px">Pixels (px)</option>
+              <option value="rem">Root em (rem)</option>
+              <option value="em">Em (em)</option>
+              <option value="vh">Viewport Height (vh)</option>
+              <option value="ms">Milliseconds (ms)</option>
+              <option value="s">Seconds (s)</option>
+              <option value="min">Minutes (min)</option>
+              <option value="MB">Megabytes (MB)</option>
+              <option value="KB">Kilobytes (KB)</option>
+              <option value="GB">Gigabytes (GB)</option>
+              <option value="deg">Degrees (°)</option>
+              <option value="rad">Radians (rad)</option>
+              <option value="bytes">Bytes</option>
+              <option value="bits">Bits</option>
+              <option value="Hz">Hertz (Hz)</option>
+              <option value="kHz">Kilohertz (kHz)</option>
+            </select>
+          </div>
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-300">To Unit:</label>
+            <select id="toUnit" class="w-full p-3 rounded-lg text-gray-100 code-font bg-gray-900/70">
+              <option value="px">Pixels (px)</option>
+              <option value="rem">Root em (rem)</option>
+              <option value="em">Em (em)</option>
+              <option value="vh">Viewport Height (vh)</option>
+              <option value="ms">Milliseconds (ms)</option>
+              <option value="s">Seconds (s)</option>
+              <option value="min">Minutes (min)</option>
+              <option value="MB">Megabytes (MB)</option>
+              <option value="KB">Kilobytes (KB)</option>
+              <option value="GB">Gigabytes (GB)</option>
+              <option value="deg">Degrees (°)</option>
+              <option value="rad">Radians (rad)</option>
+              <option value="bytes">Bytes</option>
+              <option value="bits">Bits</option>
+              <option value="Hz">Hertz (Hz)</option>
+              <option value="kHz">Kilohertz (kHz)</option>
+            </select>
+          </div>
+        </div>
+        <div class="mt-6">
+          <label class="block text-sm font-medium text-gray-300 mb-2">Enter Value:</label>
+          <input type="number" id="unitInput" placeholder="Enter value to convert..." 
+            class="w-full p-3 rounded-lg text-gray-100 code-font bg-gray-900/70" />
+        </div>
+        <div class="flex justify-between items-center mt-6">
+          <div class="bg-gray-900/50 p-4 rounded-lg flex-1 mr-4">
+            <span class="block text-xs text-gray-400">RESULT</span>
+            <span id="convertedResult" class="text-xl font-bold text-green-400 code-font">—</span>
+          </div>
+          <button onclick="convertUnit()" class="bg-teal-600 hover:bg-teal-700 px-6 py-3 rounded-lg font-medium flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+            </svg>
+            Convert
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- GitHub README Fetcher Section -->
+    <div id="readme" class="tool-section hidden w-full space-y-6">
+      <div class="glass p-8 rounded-xl">
+        <h2 class="text-2xl font-bold mb-6 text-pink-400 flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          GitHub README Viewer
+        </h2>
+        <div class="flex space-x-2">
+          <input id="repoUrl" type="text" placeholder="Paste GitHub repository URL (e.g., https://github.com/user/repo)"
+            class="flex-1 p-3 rounded-lg text-gray-100 bg-gray-900/70 border border-gray-700 focus:border-pink-500" />
+          <button onclick="fetchReadme()" class="bg-pink-600 hover:bg-pink-700 px-6 py-3 rounded-lg font-medium flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+            </svg>
+            Fetch
+          </button>
+        </div>
+        <div id="readmeOutput" class="mt-6 prose prose-invert max-h-[600px] overflow-auto p-4 bg-gray-900/50 rounded-lg border border-gray-700 scrollbar-custom">
+          <p class="text-center text-gray-400 py-10">README content will appear here...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="mt-12 text-center text-gray-400 text-sm">
+    
+  </footer>
+
+  <script>
+    function showTab(tabId, event) {
+      document.querySelectorAll('.tool-section').forEach(el => el.classList.add('hidden'));
+      document.getElementById(tabId).classList.remove('hidden');
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active-tab'));
+      event.target.classList.add('active-tab');
+    }
+
+    function formatJSON() {
+      const input = document.getElementById('jsonInput').value;
+      const output = document.getElementById('jsonOutput');
+      try {
+        const obj = JSON.parse(input);
+        output.innerHTML = syntaxHighlight(JSON.stringify(obj, null, 2));
+      } catch (e) {
+        output.innerHTML = '<span class="text-red-400">❌ Invalid JSON: ' + e.message + '</span>';
+      }
+    }
+
+    function syntaxHighlight(json) {
+      json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, 
+        function (match) {
+          let cls = 'text-gray-300';
+          if (/^"/.test(match)) {
+            if (/:$/.test(match)) {
+              cls = 'text-purple-400';
+            } else {
+              cls = 'text-green-400';
+            }
+          } else if (/true|false/.test(match)) {
+            cls = 'text-blue-400';
+          } else if (/null/.test(match)) {
+            cls = 'text-yellow-400';
+          } else if (!isNaN(parseFloat(match))) {
+            cls = 'text-orange-400';
+          }
+          return '<span class="' + cls + '">' + match + '</span>';
+        });
+    }
+
+    function copyJSON() {
+      const output = document.getElementById('jsonOutput').textContent;
+      navigator.clipboard.writeText(output).then(() => {
+        const copyBtn = document.querySelector('button[onclick="copyJSON()"]');
+        const originalText = copyBtn.innerHTML;
+        copyBtn.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+          </svg>
+          Copied!
+        `;
+        setTimeout(() => {
+          copyBtn.innerHTML = originalText;
+        }, 2000);
+      });
+    }
+
+    function convertUnit() {
+      const value = parseFloat(document.getElementById('unitInput').value);
+      const from = document.getElementById('fromUnit').value;
+      const to = document.getElementById('toUnit').value;
+      const result = document.getElementById('convertedResult');
+
+      if (isNaN(value)) {
+        result.innerHTML = '<span class="text-red-400">Please enter a valid number</span>';
+        return;
+      }
+
+      const conversionMap = {
+        px: { rem: v => v / 16, em: v => v / 16, vh: v => v / 9, px: v => v },
+        rem: { px: v => v * 16, em: v => v, rem: v => v },
+        em: { px: v => v * 16, rem: v => v, em: v => v },
+        ms: { s: v => v / 1000, min: v => v / 60000, ms: v => v },
+        s: { ms: v => v * 1000, min: v => v / 60, s: v => v },
+        min: { ms: v => v * 60000, s: v => v * 60, min: v => v },
+        MB: { KB: v => v * 1024, GB: v => v / 1024, MB: v => v },
+        KB: { MB: v => v / 1024, GB: v => v / (1024 * 1024), KB: v => v },
+        GB: { MB: v => v * 1024, KB: v => v * 1024 * 1024, GB: v => v },
+        deg: { rad: v => v * (Math.PI / 180), deg: v => v },
+        rad: { deg: v => v * (180 / Math.PI), rad: v => v },
+        bytes: { bits: v => v * 8, bytes: v => v },
+        bits: { bytes: v => v / 8, bits: v => v },
+        Hz: { kHz: v => v / 1000, Hz: v => v },
+        kHz: { Hz: v => v * 1000, kHz: v => v },
+      };
+
+      try {
+        if (!conversionMap[from] || !conversionMap[from][to]) {
+          throw new Error('Conversion not supported');
+        }
+        const converted = conversionMap[from][to](value);
+        result.innerHTML = `${converted.toLocaleString(undefined, {maximumFractionDigits: 6})} <span class="text-gray-400">${to}</span>`;
+      } catch {
+        result.innerHTML = '<span class="text-yellow-400">⚠️ Conversion not supported</span>';
+      }
+    }
+
+    async function fetchReadme() {
+      const url = document.getElementById("repoUrl").value;
+      const output = document.getElementById("readmeOutput");
+      output.innerHTML = '<div class="flex justify-center items-center py-10"><div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-pink-500"></div></div>';
+      
+      const match = url.match(/github\.com\/([^\/]+)\/([^\/]+)(\.git)?(\/|$)/);
+
+      if (!match) {
+        output.innerHTML = "<p class='text-red-400'>❌ Invalid GitHub URL format. Please use: https://github.com/username/repository</p>";
+        return;
+      }
+
+      const [_, user, repo] = match;
+      const branches = ["main", "master"];
+
+      for (let branch of branches) {
+        try {
+          const res = await fetch(`https://raw.githubusercontent.com/${user}/${repo}/${branch}/README.md`);
+          if (!res.ok) continue;
+          const text = await res.text();
+          output.innerHTML = marked.parse(text);
+          // Add some styling to the parsed markdown
+          document.querySelectorAll('#readmeOutput pre').forEach(el => {
+            el.classList.add('bg-gray-900/70', 'p-3', 'rounded', 'overflow-x-auto', 'code-font');
+          });
+          return;
+        } catch (e) {
+          continue;
+        }
+      }
+
+      output.innerHTML = "<p class='text-yellow-400'>⚠️ README not found on main or master branch. Try another branch name.</p>";
+    }
+
+    // Initialize with JSON formatter
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('jsonInput').value = '{"name":"Engineering Toolkit","version":1.0,"features":["JSON Formatter","Unit Converter","README Viewer"]}';
+      formatJSON();
+    });
+  </script>
+</body>
+</html>
